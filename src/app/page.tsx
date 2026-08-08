@@ -2,7 +2,6 @@ import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { ActiveRosters } from "@/components/ActiveRosters";
 import { FeaturedTournament } from "@/components/FeaturedTournament";
-import { Features } from "@/components/Features";
 import { Footer } from "@/components/Footer";
 import fs from "fs";
 import path from "path";
@@ -33,7 +32,6 @@ export default function Home() {
       <Hero images={heroImages} />
       <ActiveRosters />
       <FeaturedTournament />
-      <Features />
       <Footer />
     </main>
   );

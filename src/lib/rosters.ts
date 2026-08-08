@@ -10,9 +10,12 @@ export type Player = {
     instagram: string | null;
     youtube: string | null;
     twitter: string | null;
+    discord: string | null;
   };
-  achievements: any[];
-  tournamentHistory: any[];
+  achievements: { title: string; tournament: string; year: string }[];
+  tournamentHistory: { tournament: string; team: string; result: string; year: string }[];
+  careerHistory: { year: string; team: string; role: string }[];
+  joined: string | null;
   stats: {
     tournaments: number;
     wins: number;
@@ -49,9 +52,12 @@ const createPlayer = (ign: string, slug: string, teamId: string, image: string |
     instagram: null,
     youtube: null,
     twitter: null,
+    discord: null,
   },
   achievements: [],
   tournamentHistory: [],
+  careerHistory: [],
+  joined: null,
   stats: null,
 });
 

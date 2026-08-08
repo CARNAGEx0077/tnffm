@@ -168,7 +168,7 @@ export function FeaturedTournament() {
                 {/* CTA */}
                 <div>
                   <Link
-                    href={`/tournaments/${tournament.id}`}
+                    href={`/tournaments/${tournament.slug}`}
                     className="inline-flex items-center gap-3 text-sm font-bold tracking-widest text-white hover:text-primary transition-colors uppercase group/cta relative"
                   >
                     <span>VIEW DETAILS</span>

@@ -101,37 +101,49 @@ export default function PlayersPage() {
                 <motion.div key={player.ign} variants={rowVariants}>
                   <Link
                     href={`/players/${player.slug}`}
-                    className="group relative flex flex-col md:flex-row items-start md:items-center py-6 px-4 md:px-6 border-b border-white/5 hover:bg-white/[0.02] transition-colors duration-300"
+                    className="group/row relative flex flex-col md:flex-row items-start md:items-center py-6 px-4 md:px-6 border-b border-white/5 hover:bg-white/[0.02] focus-visible:bg-white/[0.02] transition-colors duration-300 outline-none"
                   >
+                    {/* Floating Image Preview — Desktop only */}
+                    {player.image && (
+                      <div className="hidden md:block absolute right-[10%] top-1/2 -translate-y-1/2 z-30 pointer-events-none">
+                        <div className="w-[140px] h-[170px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-black/60 bg-[#111111] opacity-0 scale-90 translate-y-2 group-hover/row:opacity-100 group-hover/row:scale-100 group-hover/row:translate-y-0 group-focus-visible/row:opacity-100 group-focus-visible/row:scale-100 group-focus-visible/row:translate-y-0 transition-all duration-300 ease-out">
+                          <Image
+                            src={player.image}
+                            alt={player.ign}
+                            fill
+                            className="object-cover"
+                            sizes="140px"
+                          />
+                          {/* Bottom gradient overlay */}
+                          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
+                        </div>
+                      </div>
+                    )}
+
                     {/* Index */}
                     <div className="hidden md:block w-16 shrink-0 relative z-10">
-                      <span className="text-sm font-mono font-bold text-white/20 group-hover:text-white/40 transition-colors">
+                      <span className="text-sm font-mono font-bold text-white/20 group-hover/row:text-white/40 transition-colors">
                         {String(idx + 1).padStart(2, "0")}
                       </span>
                     </div>
 
                     {/* IGN */}
                     <div className="w-full md:w-1/3 shrink-0 mb-2 md:mb-0 flex items-center gap-4 relative z-10">
-                      {player.image && (
-                        <div className="relative w-10 h-10 rounded-full overflow-hidden opacity-0 -ml-4 scale-50 group-hover:opacity-100 group-hover:ml-0 group-hover:scale-100 transition-all duration-500 ease-out">
-                          <Image src={player.image} alt={player.ign} fill className="object-cover" sizes="40px" />
-                        </div>
-                      )}
-                      <span className="text-xl md:text-2xl font-black tracking-wide text-white group-hover:text-primary transition-colors uppercase">
+                      <span className="text-xl md:text-2xl font-black tracking-wide text-white group-hover/row:text-primary transition-colors uppercase">
                         {player.ign}
                       </span>
                     </div>
 
                     {/* Team Tag */}
                     <div className="hidden md:block w-32 shrink-0 relative z-10">
-                      <span className="text-sm font-bold tracking-widest text-white/40 uppercase group-hover:text-white/70 transition-colors">
+                      <span className="text-sm font-bold tracking-widest text-white/40 uppercase group-hover/row:text-white/70 transition-colors">
                         {player.teamShort}
                       </span>
                     </div>
 
                     {/* Team Name */}
                     <div className="flex-1 shrink-0 mb-4 md:mb-0">
-                      <span className="text-sm font-semibold tracking-wider text-white/50 uppercase group-hover:text-white/90 transition-colors">
+                      <span className="text-sm font-semibold tracking-wider text-white/50 uppercase group-hover/row:text-white/90 transition-colors">
                         {player.teamName}
                       </span>
                     </div>
@@ -146,7 +158,7 @@ export default function PlayersPage() {
                       </div>
                       <ChevronRight
                         size={20}
-                        className="text-white/20 group-hover:text-primary transition-all duration-300 group-hover:translate-x-2"
+                        className="text-white/20 group-hover/row:text-primary transition-all duration-300 group-hover/row:translate-x-2"
                       />
                     </div>
                   </Link>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,13 +24,10 @@ export function Navbar() {
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "About", href: "/#about" },
-    { name: "Community", href: "/#community" },
+    { name: "About", href: "/about" },
     { name: "Players", href: "/players" },
     { name: "Rosters", href: "/rosters" },
     { name: "Tournaments", href: "/tournaments" },
-    { name: "News", href: "/#features" },
-    { name: "Contact", href: "/#contact" },
   ];
 
   return (
@@ -46,16 +44,22 @@ export function Navbar() {
     >
       <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <span className="text-xl md:text-2xl font-black tracking-tighter text-white transition-colors drop-shadow-sm group-hover:text-primary">
-            TNFFM
-          </span>
+        <Link href="/" className="flex items-center group" aria-label="TNFFM Home">
+          <Image
+            src="/images/logo/logo.png"
+            alt="TNFFM Logo"
+            width={180}
+            height={120}
+            className="w-[140px] h-[32px] md:w-[170px] md:h-[38px] object-cover object-[center_48%] transition-transform group-hover:scale-105"
+            priority
+          />
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => {
             const isActive =
+              (link.name === "About" && pathname === "/about") ||
               (link.name === "Rosters" && pathname.startsWith("/rosters")) ||
               (link.name === "Players" && pathname.startsWith("/players")) ||
               (link.name === "Tournaments" && pathname.startsWith("/tournaments"));
@@ -79,7 +83,9 @@ export function Navbar() {
         {/* CTA Button */}
         <div className="hidden md:block">
           <Link
-            href="/#join"
+            href="https://chat.whatsapp.com/LCP24W7GlhM40bIL3ey29R"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex h-10 items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-black transition-all hover:scale-105 hover:bg-gray-100 active:scale-95"
           >
             Join Community
@@ -106,6 +112,7 @@ export function Navbar() {
         >
           {navLinks.map((link) => {
             const isActive =
+              (link.name === "About" && pathname === "/about") ||
               (link.name === "Rosters" && pathname.startsWith("/rosters")) ||
               (link.name === "Players" && pathname.startsWith("/players")) ||
               (link.name === "Tournaments" && pathname.startsWith("/tournaments"));
@@ -124,7 +131,9 @@ export function Navbar() {
             );
           })}
           <Link
-            href="/#join"
+            href="https://chat.whatsapp.com/LCP24W7GlhM40bIL3ey29R"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => setMobileMenuOpen(false)}
             className="mt-4 inline-flex h-12 items-center justify-center rounded-md bg-white px-6 text-base font-semibold text-black transition-colors"
           >

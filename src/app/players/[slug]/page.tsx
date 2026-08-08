@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ROSTERS } from "@/lib/rosters";
@@ -27,14 +27,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   if (!targetPlayer) {
-    return {
-      title: "Player Not Found | TNFFM",
-    };
+    return { title: "Player Not Found | TNFFM" };
   }
 
   return {
     title: `${targetPlayer.ign} | TNFFM`,
-    description: `${targetPlayer.ign} player profile, current team and competitive history on TNFFM.`,
+    description: `${targetPlayer.ign} player profile, current team ${teamName} and competitive history on TNFFM.`,
   };
 }
 
@@ -43,6 +41,7 @@ export default async function PlayerProfilePage({ params }: PageProps) {
   let player = null;
   let currentTeam = null;
 
+  // Find player and their team
   for (const roster of ROSTERS) {
     const p = roster.players.find((pl) => pl.slug === slug);
     if (p) {
@@ -57,102 +56,43 @@ export default async function PlayerProfilePage({ params }: PageProps) {
   }
 
   const hasSocials =
-    player.social.instagram || player.social.youtube || player.social.twitter;
+    player.social.instagram || player.social.youtube || player.social.twitter || player.social.discord;
+
+  // Get current teammates (exclude the player themselves)
+  const teammates = currentTeam.players.filter((p) => p.slug !== player.slug);
+
+  // Get related players (just picking some other players from other teams as fallback if needed, but teammates is enough)
+  let relatedPlayers = ROSTERS.flatMap((r) => r.players).filter((p) => p.slug !== player.slug && p.teamId !== currentTeam.id).slice(0, 4);
 
   return (
     <main className="relative min-h-screen bg-background flex flex-col">
       <Navbar />
 
       <div className="flex-grow pt-32 pb-24 relative z-10">
-        <div className="container mx-auto px-6 md:px-12">
-          {/* Breadcrumbs */}
-          <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-white/30 uppercase mb-12">
-            <Link href="/" className="hover:text-white transition-colors">
-              HOME
-            </Link>
-            <ChevronRight size={12} className="text-white/20" />
-            <Link href="/players" className="hover:text-white transition-colors">
-              PLAYERS
-            </Link>
-            <ChevronRight size={12} className="text-white/20" />
-            <span className="text-primary">{player.ign}</span>
-          </div>
+        <div className="container mx-auto px-6 md:px-12 max-w-6xl">
+          
+          {/* Navigation */}
+          <Link
+            href="/players"
+            className="inline-flex items-center gap-2 text-[10px] font-bold tracking-widest text-white/40 uppercase hover:text-white transition-colors mb-12"
+          >
+            <ArrowLeft size={14} />
+            ALL PLAYERS
+          </Link>
 
-          {/* Split Hero Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-24 items-center">
-            {/* Player Information (Left) */}
-            <div className="flex flex-col order-2 lg:order-1">
-              <div className="mb-4">
-                <span className="text-xs font-bold tracking-widest text-white/50 uppercase">
-                  PLAYER
-                </span>
-              </div>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white uppercase mb-8">
-                {player.ign}
-              </h1>
-
-              {/* Status */}
-              <div className="inline-flex items-center gap-2 mb-10 w-fit px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-bold tracking-widest text-green-400">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                ACTIVE
-              </div>
-
-              {/* Core Info Grid */}
-              <div className="grid grid-cols-2 gap-y-8 gap-x-12 border-t border-white/10 pt-8">
-                <div>
-                  <h3 className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-1">
-                    CURRENT TEAM
-                  </h3>
-                  <Link
-                    href={`/rosters/${currentTeam.id}`}
-                    className="text-sm font-semibold text-white uppercase hover:text-primary transition-colors flex items-center gap-2"
-                  >
-                    {currentTeam.name}
-                    <ChevronRight size={14} className="text-white/30" />
-                  </Link>
-                </div>
-                <div>
-                  <h3 className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-1">
-                    TEAM TAG
-                  </h3>
-                  <p className="text-sm font-semibold text-white uppercase">
-                    {currentTeam.shortName}
-                  </p>
-                </div>
-
-                {player.role && (
-                  <div>
-                    <h3 className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-1">
-                      ROLE
-                    </h3>
-                    <p className="text-sm font-semibold text-white uppercase">
-                      {player.role}
-                    </p>
-                  </div>
-                )}
-
-                {player.region && (
-                  <div>
-                    <h3 className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-1">
-                      REGION
-                    </h3>
-                    <p className="text-sm font-semibold text-white uppercase">
-                      {player.region}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Player Image (Right) */}
-            <div className="order-1 lg:order-2 w-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] relative bg-surface/30 rounded-3xl overflow-hidden border border-white/5 flex flex-col items-center justify-center">
+          {/* ═══════════════════════════════════════════ */}
+          {/* HEADER                                     */}
+          {/* ═══════════════════════════════════════════ */}
+          <div className="flex flex-col md:flex-row gap-10 md:gap-16 lg:gap-24 mb-16 items-start">
+            {/* Player Photo */}
+            <div className="w-full md:w-[35%] aspect-[4/5] relative bg-white/[0.02] border border-white/5 rounded-sm overflow-hidden flex flex-col items-center justify-center shrink-0">
               {player.image ? (
                 <Image
                   src={player.image}
                   alt={player.ign}
                   fill
-                  className="object-cover md:object-contain"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover object-top"
+                  sizes="(max-width: 768px) 100vw, 35vw"
                   priority
                 />
               ) : (
@@ -160,171 +100,311 @@ export default async function PlayerProfilePage({ params }: PageProps) {
                   <span className="text-6xl font-black text-white/5 tracking-tighter mb-4">
                     {currentTeam.shortName}
                   </span>
-                  <span className="text-3xl font-bold text-white/20 uppercase tracking-widest mb-2">
+                  <span className="text-3xl font-bold text-white/20 uppercase tracking-widest">
                     {player.ign}
                   </span>
-                  <div className="w-12 h-1 bg-primary/20 mb-6" />
-                  <span className="text-xs font-bold text-white/10 uppercase tracking-widest">
-                    PLAYER PROFILE
-                  </span>
                 </div>
               )}
             </div>
+
+            {/* Player Details */}
+            <div className="flex-1 pt-4 md:pt-10">
+              <h1 className="text-5xl md:text-6xl lg:text-8xl font-black tracking-tighter text-white uppercase mb-4 md:mb-6">
+                {player.ign}
+              </h1>
+              
+              <Link 
+                href={`/rosters/${currentTeam.id}`}
+                className="inline-block text-xl md:text-3xl font-bold tracking-tight text-white/50 uppercase mb-8 hover:text-primary transition-colors"
+              >
+                {currentTeam.name}
+              </Link>
+              
+              <div className="block mb-10">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-bold tracking-widest text-green-400">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  ACTIVE
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {player.role && (
+                  <p className="text-lg md:text-xl font-bold text-white uppercase tracking-wide">
+                    {player.role}
+                  </p>
+                )}
+                {player.region && (
+                  <p className="text-lg md:text-xl font-bold text-white uppercase tracking-wide">
+                    {player.region}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-            {/* Left Column */}
-            <div className="lg:col-span-8 space-y-20">
-              {/* Current Team Block */}
-              <section>
-                <h2 className="text-2xl font-black tracking-tight text-white uppercase mb-8 flex items-center gap-4">
-                  CURRENT TEAM
-                  <div className="h-[1px] flex-1 bg-white/10" />
-                </h2>
-                <Link
-                  href={`/rosters/${currentTeam.id}`}
-                  className="group flex items-center gap-6 p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors"
-                >
-                  <div className="relative w-20 h-20 shrink-0 bg-black/50 rounded-xl p-3 border border-white/5">
-                    <Image
-                      src={currentTeam.logo}
-                      alt={currentTeam.name}
-                      fill
-                      className="object-contain p-2"
-                    />
+          {/* ═══════════════════════════════════════════ */}
+          {/* SNAPSHOT                                   */}
+          {/* ═══════════════════════════════════════════ */}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 py-8 border-y border-white/10 mb-16">
+            <div>
+              <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-2">CURRENT TEAM</p>
+              <p className="text-sm font-bold text-white uppercase">{currentTeam.name}</p>
+            </div>
+            {player.role && (
+              <div>
+                <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-2">ROLE</p>
+                <p className="text-sm font-bold text-white uppercase">{player.role}</p>
+              </div>
+            )}
+            {player.region && (
+              <div>
+                <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-2">REGION</p>
+                <p className="text-sm font-bold text-white uppercase">{player.region}</p>
+              </div>
+            )}
+            <div>
+              <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-2">STATUS</p>
+              <p className="text-sm font-bold text-white uppercase">ACTIVE</p>
+            </div>
+            {player.joined && (
+              <div>
+                <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-2">PLAYER SINCE</p>
+                <p className="text-sm font-bold text-white uppercase">{player.joined}</p>
+              </div>
+            )}
+          </div>
+
+          {/* ═══════════════════════════════════════════ */}
+          {/* CURRENT TEAM                               */}
+          {/* ═══════════════════════════════════════════ */}
+          <section className="mb-16">
+            <h2 className="text-xs font-bold tracking-widest text-white/40 uppercase mb-6">CURRENT TEAM</h2>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 py-6 md:py-8 px-6 md:px-10 bg-white/[0.02] border border-white/5 rounded-xl">
+              <div className="flex items-center gap-6">
+                <div className="relative w-16 h-16 shrink-0 bg-black/50 rounded-lg p-2 border border-white/5">
+                  <Image
+                    src={currentTeam.logo}
+                    alt={currentTeam.name}
+                    fill
+                    className="object-contain p-2"
+                  />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-black text-white uppercase tracking-tight">{currentTeam.name}</h3>
+                  <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mt-1">{currentTeam.shortName}</p>
+                </div>
+              </div>
+              <Link
+                href={`/rosters/${currentTeam.id}`}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white/5 px-8 text-xs font-bold tracking-widest text-white uppercase transition-colors hover:bg-white/10 border border-white/5"
+              >
+                VIEW TEAM
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          </section>
+
+          {/* ═══════════════════════════════════════════ */}
+          {/* CAREER HISTORY                             */}
+          {/* ═══════════════════════════════════════════ */}
+          {player.careerHistory && player.careerHistory.length > 0 && (
+            <section className="py-12 border-t border-white/10">
+              <h2 className="text-2xl font-black tracking-tight text-white uppercase mb-10">CAREER HISTORY</h2>
+              <div className="space-y-0 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[1px] before:bg-white/10">
+                {player.careerHistory.map((item, idx) => (
+                  <div key={idx} className="relative pl-10 py-6 border-b border-white/5 last:border-none">
+                    <div className="absolute left-1 top-7 w-[22px] h-[22px] rounded-full bg-background border-2 border-white/10 flex items-center justify-center">
+                      {idx === 0 ? (
+                        <span className="w-2 h-2 rounded-full bg-primary" />
+                      ) : (
+                        <span className="w-2 h-2 rounded-full bg-white/20" />
+                      )}
+                    </div>
+                    <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold tracking-widest text-white/40 uppercase block mb-1">
+                          {item.year}
+                        </span>
+                        <h3 className="text-xl font-black text-white uppercase tracking-tight">{item.team}</h3>
+                      </div>
+                      <span className="text-sm font-semibold tracking-wide text-white/50 uppercase">
+                        {item.role}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-black text-white uppercase group-hover:text-primary transition-colors">
-                      {currentTeam.name}
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ═══════════════════════════════════════════ */}
+          {/* TOURNAMENT RECORD                          */}
+          {/* ═══════════════════════════════════════════ */}
+          {player.tournamentHistory && player.tournamentHistory.length > 0 && (
+            <section className="py-12 border-t border-white/10">
+              <h2 className="text-2xl font-black tracking-tight text-white uppercase mb-10">TOURNAMENT RECORD</h2>
+              <div className="overflow-x-auto pb-4">
+                <table className="w-full text-left min-w-[600px]">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="pb-4 text-[10px] font-bold tracking-widest text-white/30 uppercase font-sans">Tournament</th>
+                      <th className="pb-4 text-[10px] font-bold tracking-widest text-white/30 uppercase font-sans">Team</th>
+                      <th className="pb-4 text-[10px] font-bold tracking-widest text-white/30 uppercase font-sans">Result</th>
+                      <th className="pb-4 text-[10px] font-bold tracking-widest text-white/30 uppercase font-sans text-right">Year</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {player.tournamentHistory.map((item, idx) => (
+                      <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
+                        <td className="py-5 pr-4 text-sm font-bold text-white uppercase">{item.tournament}</td>
+                        <td className="py-5 pr-4 text-sm font-semibold text-white/60 uppercase">{item.team}</td>
+                        <td className="py-5 pr-4 text-sm font-bold text-primary uppercase">{item.result}</td>
+                        <td className="py-5 text-sm font-bold text-white/40 uppercase text-right">{item.year}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+
+          {/* ═══════════════════════════════════════════ */}
+          {/* ACHIEVEMENTS                               */}
+          {/* ═══════════════════════════════════════════ */}
+          {player.achievements && player.achievements.length > 0 && (
+            <section className="py-12 border-t border-white/10">
+              <h2 className="text-2xl font-black tracking-tight text-white uppercase mb-10">ACHIEVEMENTS</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {player.achievements.map((item, idx) => (
+                  <div key={idx} className="flex flex-col p-6 bg-white/[0.02] border border-white/5 rounded-xl">
+                    <span className="text-[10px] font-bold tracking-widest text-primary uppercase mb-2">
+                      {item.year}
+                    </span>
+                    <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2">
+                      {item.title}
                     </h3>
-                    <p className="text-xs font-bold tracking-widest text-white/40 uppercase mt-1">
-                      {currentTeam.shortName}
+                    <p className="text-sm font-semibold text-white/50 uppercase">
+                      {item.tournament}
                     </p>
                   </div>
-                  <div className="hidden md:flex items-center gap-2 text-xs font-bold tracking-widest text-white/40 uppercase group-hover:text-white transition-colors">
-                    VIEW TEAM
-                    <ChevronRight size={16} />
-                  </div>
-                </Link>
-              </section>
+                ))}
+              </div>
+            </section>
+          )}
 
-              {/* Tournament History */}
-              <section>
-                <h2 className="text-2xl font-black tracking-tight text-white uppercase mb-8 flex items-center gap-4">
-                  TOURNAMENT HISTORY
-                  <div className="h-[1px] flex-1 bg-white/10" />
-                </h2>
-                {player.tournamentHistory && player.tournamentHistory.length > 0 ? (
-                  <div className="space-y-4">
-                    {/* Prepare for actual rendering when data exists */}
-                  </div>
-                ) : (
-                  <div className="py-12 px-8 rounded-2xl border border-white/5 bg-white/[0.01] text-center">
-                    <p className="text-sm font-semibold tracking-wide text-white/40 uppercase">
-                      No tournament history available yet.
-                    </p>
-                  </div>
-                )}
-              </section>
-
-              {/* Achievements */}
-              <section>
-                <h2 className="text-2xl font-black tracking-tight text-white uppercase mb-8 flex items-center gap-4">
-                  ACHIEVEMENTS
-                  <div className="h-[1px] flex-1 bg-white/10" />
-                </h2>
-                {player.achievements && player.achievements.length > 0 ? (
-                  <div className="space-y-4">
-                    {/* Prepare for actual rendering when data exists */}
-                  </div>
-                ) : (
-                  <div className="py-12 px-8 rounded-2xl border border-white/5 bg-white/[0.01] text-center">
-                    <p className="text-sm font-semibold tracking-wide text-white/40 uppercase">
-                      No achievements recorded yet.
-                    </p>
-                  </div>
-                )}
-              </section>
-            </div>
-
-            {/* Right Sidebar */}
-            <div className="lg:col-span-4 space-y-12">
-              {/* Career Summary */}
-              <section>
-                <h3 className="text-[10px] font-bold tracking-widest text-white/50 uppercase mb-6">
-                  CAREER SUMMARY
-                </h3>
-                <div className="space-y-6 relative before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-[1px] before:bg-white/10">
-                  {/* Current Team Item */}
-                  <div className="relative pl-10">
-                    <div className="absolute left-1 top-1.5 w-3 h-3 rounded-full bg-primary ring-4 ring-background" />
-                    <div className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-1">
-                      CURRENT
+          {/* ═══════════════════════════════════════════ */}
+          {/* CURRENT TEAMMATES                          */}
+          {/* ═══════════════════════════════════════════ */}
+          {teammates && teammates.length > 0 && (
+            <section className="py-12 border-t border-white/10">
+              <h2 className="text-2xl font-black tracking-tight text-white uppercase mb-10">CURRENT TEAMMATES</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {teammates.map((mate) => (
+                  <Link
+                    key={mate.ign}
+                    href={`/players/${mate.slug}`}
+                    className="group flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/15 transition-all duration-300"
+                  >
+                    {mate.image ? (
+                      <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border border-white/10">
+                        <Image src={mate.image} alt={mate.ign} fill className="object-cover" sizes="48px" />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                        <span className="text-[10px] font-bold text-white/20">{mate.ign.substring(0, 2)}</span>
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-bold text-white uppercase truncate group-hover:text-primary transition-colors">{mate.ign}</h4>
+                      <p className="text-[9px] font-bold tracking-widest text-white/40 uppercase mt-0.5 truncate">{currentTeam.shortName}</p>
                     </div>
-                    <div className="text-sm font-semibold text-white uppercase">
-                      {currentTeam.name}
-                    </div>
-                  </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ═══════════════════════════════════════════ */}
+          {/* SOCIAL LINKS                               */}
+          {/* ═══════════════════════════════════════════ */}
+          {hasSocials && (
+            <section className="py-12 border-t border-white/10">
+              <h2 className="text-2xl font-black tracking-tight text-white uppercase mb-10">SOCIAL LINKS</h2>
+              <div className="flex flex-wrap gap-4">
+                {player.social.instagram && (
+                  <a href={player.social.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">
+                    <span className="text-xs font-bold tracking-widest text-white uppercase">Instagram</span>
+                    <ExternalLink size={12} className="text-white/40" />
+                  </a>
+                )}
+                {player.social.youtube && (
+                  <a href={player.social.youtube} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">
+                    <span className="text-xs font-bold tracking-widest text-white uppercase">YouTube</span>
+                    <ExternalLink size={12} className="text-white/40" />
+                  </a>
+                )}
+                {player.social.twitter && (
+                  <a href={player.social.twitter} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">
+                    <span className="text-xs font-bold tracking-widest text-white uppercase">Twitter</span>
+                    <ExternalLink size={12} className="text-white/40" />
+                  </a>
+                )}
+                {player.social.discord && (
+                  <a href={player.social.discord} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors">
+                    <span className="text-xs font-bold tracking-widest text-white uppercase">Discord</span>
+                    <ExternalLink size={12} className="text-white/40" />
+                  </a>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* ═══════════════════════════════════════════ */}
+          {/* EXPLORE MORE                               */}
+          {/* ═══════════════════════════════════════════ */}
+          {relatedPlayers && relatedPlayers.length > 0 && (
+            <section className="py-12 md:py-20 border-t border-white/10 mt-12">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                <div>
+                  <span className="text-[10px] font-bold tracking-widest text-white/30 uppercase block mb-2">DISCOVER</span>
+                  <h2 className="text-3xl md:text-4xl font-black tracking-tight text-white uppercase">MORE PLAYERS</h2>
                 </div>
-              </section>
-
-              {/* Player Stats (Hidden unless populated) */}
-              {player.stats && (
-                <section>
-                  <h3 className="text-[10px] font-bold tracking-widest text-white/50 uppercase mb-6">
-                    STATISTICS
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                      <div className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-2">WINS</div>
-                      <div className="text-2xl font-black text-white">{player.stats.wins}</div>
-                    </div>
-                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                      <div className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-2">KILLS</div>
-                      <div className="text-2xl font-black text-white">{player.stats.kills}</div>
-                    </div>
-                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                      <div className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-2">TOURNAMENTS</div>
-                      <div className="text-2xl font-black text-white">{player.stats.tournaments}</div>
-                    </div>
-                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                      <div className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-2">MATCHES</div>
-                      <div className="text-2xl font-black text-white">{player.stats.matches}</div>
-                    </div>
-                  </div>
-                </section>
-              )}
-
-              {/* Socials */}
-              {hasSocials && (
-                <section>
-                  <h3 className="text-[10px] font-bold tracking-widest text-white/50 uppercase mb-6">
-                    SOCIAL MEDIA
-                  </h3>
-                  <div className="flex flex-col gap-3">
-                    {player.social.instagram && (
-                      <a href={player.social.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group">
-                        <span className="text-xs font-bold tracking-widest text-white uppercase">Instagram</span>
-                        <ExternalLink size={14} className="text-white/30 group-hover:text-white transition-colors" />
-                      </a>
+                <Link
+                  href="/players"
+                  className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-white/50 hover:text-white transition-colors uppercase"
+                >
+                  ALL PLAYERS
+                  <ArrowRight size={14} />
+                </Link>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {relatedPlayers.map((p) => (
+                  <Link
+                    key={p.ign}
+                    href={`/players/${p.slug}`}
+                    className="group flex items-center gap-4 p-4 rounded-xl bg-white/[0.01] border border-white/5 hover:bg-white/[0.03] hover:border-white/15 transition-all duration-300"
+                  >
+                    {p.image ? (
+                      <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border border-white/10">
+                        <Image src={p.image} alt={p.ign} fill className="object-cover" sizes="48px" />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                        <span className="text-[10px] font-bold text-white/20">{p.ign.substring(0, 2)}</span>
+                      </div>
                     )}
-                    {player.social.youtube && (
-                      <a href={player.social.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group">
-                        <span className="text-xs font-bold tracking-widest text-white uppercase">YouTube</span>
-                        <ExternalLink size={14} className="text-white/30 group-hover:text-white transition-colors" />
-                      </a>
-                    )}
-                    {player.social.twitter && (
-                      <a href={player.social.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group">
-                        <span className="text-xs font-bold tracking-widest text-white uppercase">Twitter</span>
-                        <ExternalLink size={14} className="text-white/30 group-hover:text-white transition-colors" />
-                      </a>
-                    )}
-                  </div>
-                </section>
-              )}
-            </div>
-          </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-bold text-white uppercase truncate group-hover:text-primary transition-colors">{p.ign}</h4>
+                      {/* Note: In a real app we'd look up the player's team name here, but we'll just show PLAYER for simplicity in the 'more players' widget */}
+                      <p className="text-[9px] font-bold tracking-widest text-white/40 uppercase mt-0.5 truncate">PLAYER</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+          
         </div>
       </div>
 

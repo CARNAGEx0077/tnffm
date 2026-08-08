@@ -185,14 +185,16 @@ export function Hero({ images = ["/images/hero/hero_1.png"] }: { images?: string
             className="flex flex-col sm:flex-row items-center gap-5"
           >
             <Link
-              href="#explore"
+              href="#rosters"
               className="group inline-flex h-14 w-full sm:w-auto items-center justify-center gap-3 rounded-full bg-primary px-8 text-base font-semibold text-white transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(255,59,48,0.3)]"
             >
               Explore TNFFM
               <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <Link
-              href="#join"
+              href="https://chat.whatsapp.com/LCP24W7GlhM40bIL3ey29R"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex h-14 w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-[#111111]/60 backdrop-blur-md border border-white/10 px-8 text-base font-medium text-white transition-all duration-300 hover:bg-[#222222]/80 hover:border-white/20"
             >
               Join Community
