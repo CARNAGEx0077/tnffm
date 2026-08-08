@@ -4,42 +4,7 @@ import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-
-const ROSTERS = [
-  {
-    id: "narikootam-gamerz",
-    shortName: "NKG",
-    name: "NARIKOOTAM GAMERZ",
-    logo: "/Images/team_logo/nkg_Esports.png",
-    status: "ACTIVE",
-    players: ["NKG.ALEEM", "NKG.RAJESH", "NKG.SCRIPT", "NKG.HYPER", "NKG.MANI"],
-  },
-  {
-    id: "pvs-gaming",
-    shortName: "PVS",
-    name: "PVS GAMING",
-    logo: "/Images/team_logo/pvs_gaming.png",
-    status: "ACTIVE",
-    players: ["PVS.KHONSU", "PVS.YOGESH", "PVS.NOBITA", "PVS.SCRIPT", "PVS.KRISH"],
-  },
-  {
-    id: "ruthless-esports",
-    shortName: "RE",
-    name: "RUTHLESS ESPORTS",
-    logo: "/Images/team_logo/ruthless_esports.png",
-    status: "ACTIVE",
-    players: ["RE.THAKU", "RE.KUTTY", "RE.AKILJR", "RE.BELIKESR", "RE.KS07"],
-  },
-  {
-    id: "rk-esports",
-    shortName: "RK",
-    name: "RK ESPORTS",
-    logo: "/Images/team_logo/rk_esports.png",
-    status: "ACTIVE",
-    players: ["RK.ODIN", "RK.FLASH", "RK.LIYON", "RK.SINGAM"],
-  },
-];
-
+import { ROSTERS } from "@/lib/rosters";
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -154,14 +119,14 @@ export function ActiveRosters() {
                   <div className="flex flex-col">
                     {roster.players.map((player, idx) => (
                       <div 
-                        key={player} 
+                        key={player.ign} 
                         className="group/row flex items-center gap-4 py-2 px-2 -mx-2 rounded-lg transition-colors duration-200 hover:bg-white/5"
                       >
                         <span className="text-[10px] font-mono font-bold text-white/20 group-hover/row:text-white/40 transition-colors">
                           {String(idx + 1).padStart(2, "0")}
                         </span>
                         <span className="text-sm font-semibold tracking-wide text-white/70 group-hover/row:text-white transition-colors">
-                          {player}
+                          {player.ign}
                         </span>
                       </div>
                     ))}

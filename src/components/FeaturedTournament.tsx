@@ -1,115 +1,186 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
-import { Calendar, Users, Trophy, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import { TOURNAMENTS } from "@/lib/tournaments";
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const rowVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
 
 export function FeaturedTournament() {
   return (
-    <section className="py-24 relative overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
-
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+    <section className="py-32 bg-background relative overflow-hidden border-t border-white/5" id="tournaments">
+      <div className="container mx-auto px-6 md:px-12">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">Featured Tournament</h2>
-            <p className="text-muted text-lg max-w-xl">
-              Compete against the best teams in Tamil Nadu for glory and massive prize pools.
-            </p>
+            <div className="inline-flex items-center gap-2 mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span className="text-xs font-bold tracking-widest text-white/50 uppercase">
+                UPCOMING TOURNAMENTS
+              </span>
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white uppercase">
+              COMPETE. QUALIFY. CONQUER.
+            </h2>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            className="shrink-0"
           >
             <Link
-              href="#tournaments"
-              className="inline-flex items-center gap-2 text-primary font-medium hover:text-white transition-colors"
+              href="/tournaments"
+              className="group inline-flex items-center gap-2 text-sm font-bold tracking-widest text-white/60 hover:text-white transition-colors uppercase"
             >
-              View all tournaments
-              <ChevronRight size={18} />
+              VIEW ALL TOURNAMENTS
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </motion.div>
         </div>
 
+        {/* Editorial Tournament List */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="rounded-3xl border border-border bg-surface overflow-hidden group"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="flex flex-col gap-0"
         >
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 h-full">
-            {/* Banner Side */}
-            <div className="lg:col-span-3 relative h-64 md:h-auto bg-card overflow-hidden">
-              {/* Placeholder image representation */}
-              <div className="absolute inset-0 bg-gradient-to-br from-surface to-background flex items-center justify-center">
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
-                <div className="w-32 h-32 rounded-full border border-primary/20 flex items-center justify-center bg-primary/5 backdrop-blur-sm z-10 group-hover:scale-110 transition-transform duration-700">
-                  <Trophy size={48} className="text-primary opacity-80" />
-                </div>
-                <div className="absolute bottom-4 left-4 text-xs font-mono text-muted/50">BANNER PLACEHOLDER</div>
+          {TOURNAMENTS.map((tournament) => (
+            <motion.div
+              key={tournament.id}
+              variants={rowVariants}
+              className="group relative flex flex-col lg:flex-row items-stretch border-t border-white/10 hover:bg-white/[0.02] transition-colors duration-500"
+            >
+              {/* Hover Top Border Accent */}
+              <div className="absolute top-0 left-0 right-0 h-[1px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-20" />
+
+              {/* Editorial Index (Desktop Only) */}
+              <div className="hidden lg:flex flex-col justify-between py-10 pr-8 w-24 shrink-0 border-r border-white/5">
+                <span className="text-3xl font-black text-white/20 group-hover:text-white/40 transition-colors duration-500">
+                  {tournament.index}
+                </span>
+                <span className="text-[9px] font-bold tracking-widest text-white/20 uppercase" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+                  UPCOMING
+                </span>
               </div>
-            </div>
 
-            {/* Content Side */}
-            <div className="lg:col-span-2 p-8 md:p-12 flex flex-col justify-center bg-surface relative">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-xs font-bold tracking-wider uppercase w-max mb-6">
-                Coming Soon
-              </div>
-
-              <h3 className="text-3xl md:text-4xl font-black mb-8 leading-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-muted transition-all">
-                TNFFM Community Cup
-              </h3>
-
-              <div className="space-y-6 mb-10">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-card border border-border flex items-center justify-center">
-                    <Trophy className="text-primary" size={20} />
-                  </div>
-                  <div>
-                    <div className="text-sm text-muted mb-1">Prize Pool</div>
-                    <div className="text-xl font-bold">₹50,000</div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-card border border-border flex items-center justify-center">
-                    <Users className="text-white" size={20} />
-                  </div>
-                  <div>
-                    <div className="text-sm text-muted mb-1">Teams</div>
-                    <div className="text-xl font-bold">48</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-card border border-border flex items-center justify-center">
-                    <Calendar className="text-white" size={20} />
-                  </div>
-                  <div>
-                    <div className="text-sm text-muted mb-1">Date</div>
-                    <div className="text-xl font-bold">Coming Soon</div>
-                  </div>
+              {/* Tournament Image */}
+              <div className="relative w-full lg:w-[38%] h-64 lg:h-auto overflow-hidden shrink-0">
+                <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105 bg-surface/50">
+                  <Image
+                    src={tournament.image}
+                    alt={tournament.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                  />
+                  {/* Subtle dark gradient for text readability if needed on mobile */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent lg:hidden" />
                 </div>
               </div>
 
-              <Link
-                href="#learn-more"
-                className="w-full h-14 inline-flex items-center justify-center rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition-colors"
-              >
-                Learn More
-              </Link>
-            </div>
-          </div>
+              {/* Tournament Content */}
+              <div className="flex-1 py-8 lg:py-10 px-0 lg:px-12 flex flex-col justify-between">
+                <div>
+                  {/* Status Indicator */}
+                  <div className="inline-flex items-center gap-2 mb-4">
+                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-[10px] font-bold tracking-widest text-primary uppercase">
+                      {tournament.status}
+                    </span>
+                  </div>
+
+                  {/* Title & Organizer */}
+                  <h3 className="text-3xl lg:text-4xl font-black text-white uppercase tracking-tight mb-2 group-hover:translate-x-1 transition-transform duration-500">
+                    {tournament.title}
+                  </h3>
+                  <p className="text-sm font-semibold tracking-wide text-white/40 uppercase mb-10">
+                    HOSTED BY {tournament.organizer}
+                  </p>
+                </div>
+
+                {/* Metadata Row */}
+                <div className="flex flex-wrap items-center gap-8 lg:gap-16 mb-10">
+                  <div>
+                    <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-1">
+                      PRIZE POOL
+                    </p>
+                    <p className="text-lg font-bold text-white">{tournament.prize}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-1">
+                      REGISTRATION
+                    </p>
+                    <p className="text-lg font-bold text-white">{tournament.registrationFee}</p>
+                  </div>
+                  {tournament.teams && (
+                    <div>
+                      <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-1">
+                        TEAMS
+                      </p>
+                      <p className="text-lg font-bold text-white">{tournament.teams}</p>
+                    </div>
+                  )}
+                  {tournament.format && (
+                    <div>
+                      <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-1">
+                        FORMAT
+                      </p>
+                      <p className="text-lg font-bold text-white">{tournament.format}</p>
+                    </div>
+                  )}
+                  {tournament.date && (
+                    <div>
+                      <p className="text-[10px] font-bold tracking-widest text-white/30 uppercase mb-1">
+                        DATE
+                      </p>
+                      <p className="text-lg font-bold text-white">{tournament.date}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* CTA */}
+                <div>
+                  <Link
+                    href={`/tournaments/${tournament.id}`}
+                    className="inline-flex items-center gap-3 text-sm font-bold tracking-widest text-white hover:text-primary transition-colors uppercase group/cta relative"
+                  >
+                    <span>VIEW DETAILS</span>
+                    <ArrowRight size={16} className="transition-transform duration-300 group-hover/cta:translate-x-1" />
+                    <div className="absolute -bottom-1 left-0 right-0 h-[1px] bg-white/20 group-hover/cta:bg-primary/50 transition-colors" />
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+          {/* Final Bottom Border */}
+          <div className="h-[1px] bg-white/10 w-full" />
         </motion.div>
       </div>
     </section>
