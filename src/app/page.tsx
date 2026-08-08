@@ -9,14 +9,14 @@ import path from "path";
 
 export default function Home() {
   // Read hero images automatically
-  const heroImagesDir = path.join(process.cwd(), "public/Images/Hero");
+  const heroImagesDir = path.join(process.cwd(), "public/images/hero");
   let heroImages: string[] = [];
   try {
     if (fs.existsSync(heroImagesDir)) {
       const files = fs.readdirSync(heroImagesDir);
       heroImages = files
         .filter((file) => /\.(jpg|jpeg|png|webp|avif)$/i.test(file))
-        .map((file) => `/Images/Hero/${file}`);
+        .map((file) => `/images/hero/${file}`);
     }
   } catch (error) {
     console.error("Failed to read hero images directory:", error);
@@ -24,7 +24,7 @@ export default function Home() {
 
   // Fallback in case directory is missing or empty
   if (heroImages.length === 0) {
-    heroImages = ["/Images/Hero/hero_1.png"];
+    heroImages = ["/images/hero/hero_1.png"];
   }
 
   return (

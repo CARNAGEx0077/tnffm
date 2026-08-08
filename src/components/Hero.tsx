@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export function Hero({ images = ["/Images/Hero/hero_1.png"] }: { images?: string[] }) {
+export function Hero({ images = ["/images/hero/hero_1.png"] }: { images?: string[] }) {
   const [isDesktop, setIsDesktop] = useState(true);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
